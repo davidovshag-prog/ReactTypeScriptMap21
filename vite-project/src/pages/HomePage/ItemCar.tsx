@@ -1,6 +1,6 @@
 import type {ICarItem} from "../../types/ICarItem.ts";
 import ConfirmDeleteModal from "../../componetns/common/ConfirmDeleteModal";
-import type {ICreateCar} from "../../types/ICreateCar.ts";
+
 
 //Вхідні параметри методу
 interface ItemCarProps {
@@ -8,7 +8,7 @@ interface ItemCarProps {
     //Буде передаватися вказівник на метод
     //Цей метод буде спрацьовувати на зовні callBack
     deleteCar: (id: number) => void // метод, який будемо викликати для виделення
-    setSelectedCar: (car: ICreateCar) => void; // callback, що змінює обране нами авто
+    setSelectedCar: (car: ICarItem) => void; // callback, що змінює обране нами авто
 }
 
 const ItemCar = (props: ItemCarProps) => {
@@ -41,7 +41,7 @@ const ItemCar = (props: ItemCarProps) => {
                     </div>
                     <div className={"flex gap-2"}>
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer"
-                                onClick={() => {}}>
+                                onClick={() => setSelectedCar(car)}>
                                 Edit
                         </button>
                         <ConfirmDeleteModal confirmDeleteHandler={() => deleteCar(car.id)} />
