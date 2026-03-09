@@ -65,7 +65,7 @@ const HomePage = () =>
             year: 2008
         },
     ]);
-    const[SelectedCar, setSelectedCar] = useState<ICarItem>(emptyCar);
+    const[selectedCar, setSelectedCar] = useState<ICarItem>(emptyCar);
 
     const sortByPrice = (value: string) => {
         // sort - функція списків, що сортує та змінює список за заданими значеннями
@@ -84,6 +84,16 @@ const HomePage = () =>
         const id = cars.length > 0 ? Math.max(...cars.map(car => car.id)) + 1 : 1;
         // додаємо авто створивши новий список та прописавши старий
         setCars(prev => [...prev, {...car, id: id}]);
+    }
+
+    //оновлення елемента в списку
+    const editCarHandler = (car: ICarItem) => {
+        setSelectedCar(emptyCar);
+        setCars(prev =>
+            prev.map(c =>
+                c.id === car.id ? { ...c, ...car } : c
+            )
+        );
     }
 
     const deleteCarHandler = (id: number) => {
@@ -120,7 +130,7 @@ const HomePage = () =>
                         ]} />
             </div>
 
-            <CreateCarItem onCreate={addCarHandler} />
+            <CreateCarItem onCreate={addCarHandler} editCar={selectedCar} onEdit={editCarHandler} />
             {/*key - змінна для забезпечення ідентифікації списків у віртуальному DOM*/}
             {cars.map(car =>
                 <ItemCar key={car.id} car = {car}
