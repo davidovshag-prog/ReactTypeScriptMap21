@@ -1,6 +1,7 @@
 import {useRef} from "react";
 import {Modal} from "antd";
-import {Cropper} from "react-cropper";
+// import {Cropper} from "react-cropper";
+import Cropper from "cropperjs";
 
 interface Props {
     isOpen: boolean,
@@ -10,17 +11,34 @@ interface Props {
 }
 
 const ImageCropper = ({ isOpen, setIsOpen, image, onCrop }: Props) => {
-    // useRef - react хук, що створює посиланння на об'єкт DOM
+    // useRef - react хук, що створює посилання на об'єкт DOM
     // в нашому випадку робимо посилання на Cropper
-    const cropperRef = useRef<any>(null);
+    const cropperRef = useRef<Cropper | null>(null);
+    const imgRef = useRef<HTMLImageElement | null>(null);
+
+    const initCropper = () => {
+        // перевіряємо чи є посилання на image перед оновленням Cropper
+        if (!imgRef.current) return;
+
+        // знищуємо старий Cropper
+        cropperRef.current?.destroy();
+
+        // ініціалізуємо новий Cropper
+        cropperRef.current = new Cropper(imgRef.current, {
+            // aspectRatio - співвідношення сторін
+            aspectRatio: 1,
+            // viewMode - режим перегляду
+            viewMode: 1,
+        });
+    }
 
     const handleCrop = () => {
         // перевіряємо чи існує вказівник на Cropper
         if (cropperRef.current) {
             // дістаємо Cropper через посилання
-            const cropper = cropperRef.current.cropper;
+            const cropper = cropperRef.current;
             // отримуємо обрізане фото
-            const base64 = cropper.getCropperCanvas().toDataUrl();
+            const base64 = cropper.getCroppedCanvas().toDataURL();
             // викликаємо callback функцію, передаємо обрізане зображення
             onCrop(base64);
             // закриваємо модальне вікно
@@ -31,27 +49,35 @@ const ImageCropper = ({ isOpen, setIsOpen, image, onCrop }: Props) => {
     return (
         // Modal - компонент модального вікна з Ant Design
         <Modal
-        title="Обрізати фото"
-        open={isOpen}
-        onCancel={() => setIsOpen(false)}
-        onOk={handleCrop}
-        okText={"Застосувати"}
-        cancelText={"Скасувати"}
+            title={"Обрізати фото"}
+            open={isOpen}
+            onCancel={() => setIsOpen(false)}
+            onOk={handleCrop}
+            okText={"Застосувати"}
+            cancelText={"Скасувати"}
         >
-            {/*Перевіряємо наявність image перед рендером Cropper*/}
+            {/*перевіряємо наявність image перед рендером Cropper*/}
             {image && image.length && (
-                <Cropper
-                    // передаємо зображення для обрізання
+                <img
                     src={image}
-                    style={{ height: 400, width: "100%" }}
-                    // співвідношення сторін, 0 - вільне, 1 - квадрат
-                    aspectRatio={0}
-                    // ружим виду, 1 - забороняєм виходити за рамки зображення
-                    viewMode={1}
-                    // передаємо компоненту посилання
-                ref={cropperRef}
+                    alt={"image"}
+                    ref={imgRef}
+                    onLoad={initCropper}
+                    className={"w-full h-full object-cover"}
                 />
-            )}
+            )
+                // <Cropper
+                //     // передаємо зображення для обрізання
+                //     src={image}
+                //     style={{ height: 400, width: "100%" }}
+                //     // співвідношення сторін, 0 - вільне, 1 - квадрат
+                //     aspectRatio={0}
+                //     // режим виду, 1 - забороняє виходити за межі зображення
+                //     viewMode={1}
+                //     // описуємо компоненту посилання
+                //     ref={cropperRef}
+                // />
+            }
         </Modal>
     )
 }
