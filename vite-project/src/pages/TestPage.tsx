@@ -31,6 +31,13 @@ const TestPage = () => {
         // записуємо зображення
         setImage(base64);
     }
+    const handleRotateLeft = () => {
+        cropperRef.current?.rotate(-90);
+    }
+
+    const handleRotateRight = () => {
+        cropperRef.current?.rotate(90);
+    }
 
     return (
         <div>
@@ -42,7 +49,23 @@ const TestPage = () => {
                 Обрізати зображення
             </button>
             {image && <img src={image} alt={"Обрізане фото"}/> }
+            <div className="flex gap-2 my-4">
+                <button
+                    onClick={handleRotateLeft}
+                    className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                    ⬅️ Повернути
+                </button>
+
+                <button
+                    onClick={handleRotateRight}
+                    className="bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                    ➡️ Повернути
+                </button>
+            </div>
         </div>
+
     )
 }
 
